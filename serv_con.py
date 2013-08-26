@@ -1,28 +1,30 @@
 import paramiko
-
+from thread_ssh import sshThread
 
 
 
 
 class sshConnect:
 
-    connections = {}
+    configs = {}
 
 
     def __init__(self):
 	    pass
 
     def add_conn(self,server):
-	    self.connections.update(server['ext_ip']: paramiko.SSHClient()})
-	    self.connections[server['ext_ip']].set_missing_host_key_policy(paramiko.AutoAddPolicy())
-	    self.connections[server['ext_ip']].connect(server['ext_ip'],username="root",password=server['password'])
+        self.configs.update({server['ext_ip']: sshThread(server)})
 
-    def send_comand(self,comand):
-	for ip, connect in self.connections.items():
-	    stdin, stdout, stderr = connect.exec_command(comand)
-	    self.stdout.update({ip: stdout})
-	    self.stderr.update({ip: stderr})
+    def get_server_count(self):
+        return len(self.configs)
+
+    def send_comand(self,command):
+	    for ip, thread in self.configs.items():
+            thread.command = command
+            thread.setName('ssh to ' + ip)
+            thread.setDaemon(True)
+            thread.start()
 
     def  __del__(self);
-	for ip, connect in self.connections.items():
-	    connect.close()
+	    for ip, thread in self.connections.items():
+	        del thread
