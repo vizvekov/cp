@@ -7,18 +7,16 @@ import paramiko
 class sshConnect:
 
     connections = {}
-    
-    stdout = {}
-    stderr = {}
+
 
     def __init__(self):
-	pass
-	
+	    pass
+
     def add_conn(self,server):
-	self.connections.update(server['ext_ip']: paramiko.SSHClient()})
-	self.connections[server['ext_ip']].set_missing_host_key_policy(paramiko.AutoAddPolicy())
-	self.connections[server['ext_ip']].connect(server['ext_ip'],username="root",password=server['password'])
-	
+	    self.connections.update(server['ext_ip']: paramiko.SSHClient()})
+	    self.connections[server['ext_ip']].set_missing_host_key_policy(paramiko.AutoAddPolicy())
+	    self.connections[server['ext_ip']].connect(server['ext_ip'],username="root",password=server['password'])
+
     def send_comand(self,comand):
 	for ip, connect in self.connections.items():
 	    stdin, stdout, stderr = connect.exec_command(comand)
