@@ -60,6 +60,27 @@ class SqlWork():
             return False, False
         return True, vhosts
 
+    def get_vhost_by_name(self, domain_name):
+        table_name = 'vhosts'
+        try:
+            vhost = self.get_session().query(self.Tables[table_name]).filter_by(domain_name=domain_name)[0]
+        except Exception:
+            vhost = False
+        if vhost:
+            return True, vhost
+        return False, "no vhost"
+
+    def get_param_by_vhost(self, param, domain_name = ''):
+        params = []
+        if domain_name:
+            stat, vhost = self.get_vhost_by_name(domain_name)
+            if not stat:
+                return False, "no doamin"
+            return vhost.__dict__[param]
+        for vhost in self.get_session().query(self.Tables['vhosts']):
+            params.append(vhost.__dict__[param].split())
+        return True, params
+
     def get_user_by(self, user_id = '', user_name = ''):
         if user_id != '':
             name = self.get_session().query(self.Tables['users'].name).filter_by(id=user_id)[0]
